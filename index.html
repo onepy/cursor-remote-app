@@ -199,6 +199,7 @@
   <div class="seg">
     <button id="tabChat" class="on">对话</button>
     <button id="tabScreen">画面</button>
+    <button id="tabBoard" hidden>看板</button>
   </div>
   <button id="menuBtn">⋯</button>
 </header>
@@ -236,6 +237,165 @@
       <button data-key="Backspace">⌫</button>
       <button data-key="Meta+l">打开聊天</button>
       <button id="rightClick">右键</button>
+    </div>
+  </section>
+
+  <!-- Magpie dashboard: markup from magpie-board-android; styles and logic load on first open (magpie.css / magpie.js). -->
+  <section id="magpieView" class="view">
+    <div class="app-header">
+      <div class="header-left">
+        <div class="brand-logo">
+          <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        </div>
+        <div class="brand-text-col">
+          <span class="brand-title">Magpie</span>
+          <span id="magpieVersion" class="brand-version-sub">--</span>
+        </div>
+      </div>
+      <div class="header-center">
+        <div class="profile-chip status-chip">
+          <div id="statusDot" class="status-dot connecting"></div>
+          <span id="profileName" class="label">连接中...</span>
+        </div>
+      </div>
+      <div class="header-right">
+        <button id="btnRefresh" class="icon-btn" title="刷新数据" aria-label="刷新数据">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-1.19"/></svg>
+        </button>
+        <button id="btnSettings" class="icon-btn" title="看板设置" aria-label="看板设置">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-2.82 1.17V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 3.17 14H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 10 3.17V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 2.82 1.17l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 20.83 10H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="nav-tabs">
+      <button class="tab-btn active" data-tab="quotas">额度</button>
+      <button class="tab-btn" data-tab="usage">用量</button>
+      <button class="tab-btn" data-tab="routing">路由</button>
+      <button class="tab-btn" data-tab="requests">明细</button>
+    </div>
+
+    <div class="view-container">
+      <div id="connectionBanner" style="display:none; margin-bottom:12px; padding:10px 14px; border-radius:var(--radius-md); font-size:12.5px; background:var(--danger-bg); border:1px solid rgba(239,68,68,0.3); color:var(--danger);">
+        <span id="bannerText">连不上 Magpie 网关</span>
+      </div>
+
+      <section id="view-quotas" class="tab-view">
+        <div class="summary-strip">
+          <div class="summary-chip"><div class="chip-label">总账号数</div><div id="statTotalAccounts" class="chip-value">0</div></div>
+          <div class="summary-chip"><div class="chip-label">活跃订阅</div><div id="statActiveSubs" class="chip-value">0</div></div>
+          <div class="summary-chip"><div class="chip-label">钱包总额</div><div id="statTotalBalance" class="chip-value">--</div></div>
+        </div>
+        <div id="quotasList" class="card-list"></div>
+      </section>
+
+      <section id="view-usage" class="tab-view" style="display:none;">
+        <div class="period-switch">
+          <button class="period-btn active" data-period="today">今日</button>
+          <button class="period-btn" data-period="7d">近 7 天</button>
+          <button class="period-btn" data-period="30d">近 30 天</button>
+        </div>
+        <div class="metrics-grid">
+          <div class="metric-card wide"><div class="metric-label">统计花费 (Cost)</div><div id="metricCost" class="metric-val">$0.00</div><div id="metricCostSub" class="metric-sub">折算汇率或官方定价</div></div>
+          <div class="metric-card"><div class="metric-label">总请求数 (Calls)</div><div id="metricCalls" class="metric-val">0</div><div id="metricCallsSub" class="metric-sub">错误: 0 (0%)</div></div>
+          <div class="metric-card"><div class="metric-label">缓存命中率 (Cache)</div><div id="metricCacheHit" class="metric-val">0.0%</div><div id="metricCacheSub" class="metric-sub">读取 0 Tokens</div></div>
+          <div class="metric-card"><div class="metric-label">输入 Tokens (Input)</div><div id="metricInput" class="metric-val">0</div><div id="metricInputSub" class="metric-sub">写入: 0</div></div>
+          <div class="metric-card"><div class="metric-label">输出 Tokens (Output)</div><div id="metricOutput" class="metric-val">0</div><div id="metricOutputSub" class="metric-sub">思考: 0</div></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title" id="chartTitle">调用趋势 (Hourly Calls)</div>
+          <div id="chartContainer" class="chart-bars-container"></div>
+        </div>
+        <div style="margin-bottom:14px;">
+          <div style="font-size:13px; font-weight:600; margin-bottom:10px; color:var(--text-main);">模型用量分布 (Models)</div>
+          <div id="modelsUsageList"></div>
+        </div>
+        <div style="margin-bottom:14px;">
+          <div style="font-size:13px; font-weight:600; margin-bottom:10px; color:var(--text-main);">Agent 客户端分布 (Agents)</div>
+          <div id="agentsUsageList"></div>
+        </div>
+      </section>
+
+      <section id="view-routing" class="tab-view" style="display:none;">
+        <div class="routing-header-bar">
+          <div class="routing-title"><span class="routing-pulse"></span><span>路由 · 实时 · 网关正在做的决定</span></div>
+          <div class="routing-actions"><button type="button" class="routing-chip-btn" id="btnToggleModelCatalog">模型总表</button></div>
+        </div>
+        <div id="decisionSelectorRow" class="decision-selector-row"></div>
+        <div id="topoContainer" class="topo-canvas"></div>
+        <div id="routeSummaryStats" class="route-summary-stats">
+          <div class="route-stat-col"><div id="routeStatCalls" class="route-stat-val">--</div><div class="route-stat-lbl">请求总数</div></div>
+          <div class="route-stat-col"><div id="routeStatReroutes" class="route-stat-val">--</div><div class="route-stat-lbl">智能改道</div></div>
+          <div class="route-stat-col"><div id="routeStatErrors" class="route-stat-val">--</div><div class="route-stat-lbl">Agent错误</div></div>
+        </div>
+        <div class="decision-card">
+          <div class="decision-title">
+            <span>最近一个请求是怎么路由的</span>
+            <span id="decisionTimestamp" style="font-size:11px; font-weight:normal; color:var(--text-dim); font-family:var(--font-mono);"></span>
+          </div>
+          <div id="decisionBulletsList"></div>
+          <div class="timing-section">
+            <div style="font-size:11px; color:var(--text-dim); margin-bottom:6px;">时间花在哪里 (Latency Breakdown)</div>
+            <div id="timingBarTrack" class="timing-bar-track"></div>
+            <div id="timingLegend" class="timing-legend"></div>
+          </div>
+        </div>
+        <div class="context-window-card">
+          <div class="context-header">
+            <span class="context-main-stat" id="contextMainStat">已用上下文: -- / -- token</span>
+            <span class="context-cache-badge" id="contextCacheBadge">--% 命中</span>
+          </div>
+          <div class="context-bar-track"><div id="contextBarFill" class="context-bar-fill" style="width: 0%;"></div></div>
+          <div id="treemapGrid" class="treemap-grid"></div>
+          <div id="contextLegend" style="display:flex; flex-wrap:wrap; gap:8px; font-size:10.5px; color:var(--text-dim);"></div>
+        </div>
+        <div id="modelCatalogSection" style="display:none; margin-top:14px; padding-top:14px; border-top:1px solid var(--border-subtle);">
+          <div class="search-bar"><input type="text" id="modelSearchInput" class="search-input" placeholder="搜索模型名称或厂商..."></div>
+          <div id="providerFilters" class="provider-filters"><div class="filter-chip active" data-filter="all">全部</div></div>
+          <div id="routingModelsList"></div>
+        </div>
+      </section>
+
+      <section id="view-requests" class="tab-view" style="display:none;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+          <span style="font-size:13px; font-weight:600;">近期请求记录</span>
+          <button id="btnToggleOnlyErrors" class="filter-chip" style="font-size:11px;">仅看错误</button>
+        </div>
+        <div id="requestsList"></div>
+      </section>
+    </div>
+
+    <div id="settingsModal" class="modal-overlay">
+      <div class="modal-sheet">
+        <div class="modal-header">
+          <div class="modal-title">看板设置</div>
+          <button id="btnCloseSettings" class="icon-btn" aria-label="关闭">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+          </button>
+        </div>
+        <div class="form-group" style="font-size:12px; color:var(--text-dim);">
+          数据由电脑上的中继转发自本机 Magpie（127.0.0.1:3425），网关地址和密钥只保存在电脑上。
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="cfgAutoRefresh">自动刷新频率</label>
+          <select id="cfgAutoRefresh" class="form-input" style="padding:10px;">
+            <option value="0">关闭自动刷新</option>
+            <option value="15000">每 15 秒</option>
+            <option value="30000" selected>每 30 秒</option>
+            <option value="60000">每 1 分钟</option>
+            <option value="300000">每 5 分钟</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label style="display:flex; align-items:center; gap:8px; font-size:13px; color:var(--text-main); cursor:pointer;">
+            <input type="checkbox" id="cfgRedactEmail" checked>
+            隐私保护：对账号邮箱进行脱敏（打码）
+          </label>
+        </div>
+        <div style="margin-top:14px;">
+          <button type="button" id="btnSaveConfig" class="btn-primary">保存</button>
+        </div>
+      </div>
     </div>
   </section>
 </main>
@@ -510,6 +670,9 @@ async function boot() {
     store.set('token', null);
     return showUnpaired('这台设备已被移除，请重新配对');
   }
+  // The dashboard tab appears only when the relay can reach Magpie on the computer.
+  $('tabBoard').hidden = !me.magpie;
+  if (!me.magpie && mode === 'board') setMode('chat');
   if (me.needTotp) return showTotp(verifyTotp);
   connect();
 }
@@ -548,7 +711,7 @@ function connect() {
       ungate();
       $('dot').className = 'ok';
       status('已连接');
-      send({ t: 'mode', mode });
+      send({ t: 'mode', mode: relayMode() });
       send({ t: 'windows' });
       const fromNotice = window.CursorRemoteApp?.takeOpenWin?.();
       if (fromNotice) store.set('window', fromNotice);
@@ -574,7 +737,7 @@ function connect() {
     else if (m.t === 'params') showParams(m);
     else if (m.t === 'changes') showChanges(m);
     else if (m.t === 'file') showFile(m);
-    else if (m.t === 'status') status(m.msg, m.ok);
+    else if (m.t === 'status') { clearTimeout(switchTimer); status(m.msg, m.ok); }
   };
 }
 
@@ -835,7 +998,7 @@ $('sheet').addEventListener('click', async e => {
   const b = e.target.closest('button');
   if (!b) return;
   if (b.dataset.win) { closeSheet(); return send({ t: 'attach', id: b.dataset.win }); }
-  if (b.dataset.kind) { closeSheet(); status('切换中…'); return send({ t: 'pickMenu', kind: b.dataset.kind, label: b.dataset.label }); }
+  if (b.dataset.kind) { closeSheet(); startSwitching('切换中…'); return send({ t: 'pickMenu', kind: b.dataset.kind, label: b.dataset.label }); }
   if (b.dataset.chopen) { closeSheet(); return openFile(b.dataset.chopen); }
   if (b.dataset.ch) {
     const undo = b.dataset.act2 === 'undo';
@@ -895,19 +1058,55 @@ $('sheet').addEventListener('click', async e => {
 });
 
 /* ---------- mode switching ---------- */
+// The relay only knows chat / screen; while the dashboard is open it keeps streaming the chat in the background.
+const relayMode = () => (mode === 'screen' ? 'screen' : 'chat');
+
+// The dashboard's script and styles load the first time the tab is opened.
+let magpieLoading = null;
+function loadMagpieBoard() {
+  if (!magpieLoading) {
+    magpieLoading = new Promise((resolve, reject) => {
+      const stylesheet = document.createElement('link');
+      stylesheet.rel = 'stylesheet';
+      stylesheet.href = 'magpie.css';
+      document.head.appendChild(stylesheet);
+      const script = document.createElement('script');
+      script.src = 'magpie.js';
+      script.onload = () => {
+        window.magpieBoard.mount({ request: path => api(path), notify: (text, ok) => status(text, ok !== false) });
+        resolve(window.magpieBoard);
+      };
+      script.onerror = () => { magpieLoading = null; reject(new Error('看板加载失败')); };
+      document.head.appendChild(script);
+    });
+  }
+  return magpieLoading;
+}
+
 function setMode(m) {
+  const leavingBoard = mode === 'board' && m !== 'board';
   mode = m;
   store.set('mode', m);
   $('tabChat').classList.toggle('on', m === 'chat');
   $('tabScreen').classList.toggle('on', m === 'screen');
+  $('tabBoard').classList.toggle('on', m === 'board');
   $('chatView').classList.toggle('active', m === 'chat');
   $('screenView').classList.toggle('active', m === 'screen');
+  $('magpieView').classList.toggle('active', m === 'board');
   $('chatTools').hidden = m !== 'chat';
-  if (authed) send({ t: 'mode', mode: m });
+  // The composer has nothing to send from the dashboard.
+  document.querySelector('footer .row').hidden = m === 'board';
+  if (leavingBoard) window.magpieBoard?.hide();
+  if (m === 'board') {
+    loadMagpieBoard().then(board => { if (mode === 'board') board.show(); }).catch(error => status(error.message, false));
+    return;
+  }
+  if (authed) send({ t: 'mode', mode: relayMode() });
   if (m === 'screen') { layoutStage(); applyQuality(); }
 }
 $('tabChat').onclick = () => setMode('chat');
 $('tabScreen').onclick = () => setMode('screen');
+$('tabBoard').onclick = () => setMode('board');
 
 /* ---------- chat view ---------- */
 const list = $('list'), itemsEl = $('items');
@@ -1352,7 +1551,8 @@ window.addEventListener('resize', () => { layoutStage(); applyQuality(); });
 if ('serviceWorker' in navigator && window.isSecureContext) navigator.serviceWorker.register('sw.js').catch(() => {});
 
 setCrop(crop);
-setMode(mode);
+// The relay address is not known yet at startup, so the dashboard is reopened from the chat view, not restored directly.
+setMode(mode === 'board' ? 'chat' : mode);
 boot();
 </script>
 </body>
