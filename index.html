@@ -97,6 +97,11 @@
   #queueBar .run.sub { color: #e5c07b; }
   #queueBar button { font-size: 12px; padding: 3px 9px; flex: none; }
 
+  /* Magpie dashboard: hidden until its own stylesheet is applied, so the markup can never flash unstyled.
+     Without magpie.css an inline SVG with no size fills the whole width, which looked like a giant block. */
+  #magpieView:not(.ready) { visibility: hidden; }
+  #magpieView .brand-logo svg, #magpieView .icon-btn svg { width: 20px; height: 20px; }
+
   /* screen view */
   .tools { flex: none; display: flex; gap: 6px; padding: 6px 8px; overflow-x: auto; scrollbar-width: none; background: #252526; border-bottom: 1px solid #333; min-width: 0; }
   .tools::-webkit-scrollbar { display: none; }
@@ -245,7 +250,7 @@
     <div class="app-header">
       <div class="header-left">
         <div class="brand-logo">
-          <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+          <svg viewBox="0 0 24 24" width="20" height="20"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
         </div>
         <div class="brand-text-col">
           <span class="brand-title">Magpie</span>
@@ -260,10 +265,10 @@
       </div>
       <div class="header-right">
         <button id="btnRefresh" class="icon-btn" title="刷新数据" aria-label="刷新数据">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-1.19"/></svg>
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-1.19"/></svg>
         </button>
         <button id="btnSettings" class="icon-btn" title="看板设置" aria-label="看板设置">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-2.82 1.17V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 3.17 14H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 10 3.17V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 2.82 1.17l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 20.83 10H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-2.82 1.17V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 3.17 14H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 10 3.17V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 2.82 1.17l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 20.83 10H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
         </button>
       </div>
     </div>
@@ -370,7 +375,7 @@
         <div class="modal-header">
           <div class="modal-title">看板设置</div>
           <button id="btnCloseSettings" class="icon-btn" aria-label="关闭">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
           </button>
         </div>
         <div class="form-group" style="font-size:12px; color:var(--text-dim);">
@@ -673,6 +678,8 @@ async function boot() {
   // The dashboard tab appears only when the relay can reach Magpie on the computer.
   $('tabBoard').hidden = !me.magpie;
   if (!me.magpie && mode === 'board') setMode('chat');
+  // Start fetching the dashboard (styles, script and first data) while the chat is still on screen.
+  if (me.magpie) prefetchMagpieBoard();
   if (me.needTotp) return showTotp(verifyTotp);
   connect();
 }
@@ -1061,7 +1068,7 @@ $('sheet').addEventListener('click', async e => {
 // The relay slows its chat polling while the dashboard is open, and resumes it on the way back.
 const relayMode = () => (mode === 'screen' ? 'screen' : mode === 'board' ? 'board' : 'chat');
 
-// The dashboard's script and styles load the first time the tab is opened.
+// The dashboard's styles and script are fetched as soon as the relay reports Magpie, so opening the tab shows data at once.
 let magpieLoading = null;
 function loadMagpieBoard() {
   if (!magpieLoading) {
@@ -1069,6 +1076,8 @@ function loadMagpieBoard() {
       const stylesheet = document.createElement('link');
       stylesheet.rel = 'stylesheet';
       stylesheet.href = 'magpie.css';
+      // The section stays hidden (see #magpieView:not(.ready)) until its own styles are in effect.
+      stylesheet.onload = () => $('magpieView').classList.add('ready');
       document.head.appendChild(stylesheet);
       const script = document.createElement('script');
       script.src = 'magpie.js';
@@ -1076,11 +1085,22 @@ function loadMagpieBoard() {
         window.magpieBoard.mount({ request: path => api(path), notify: (text, ok) => status(text, ok !== false) });
         resolve(window.magpieBoard);
       };
-      script.onerror = () => { magpieLoading = null; reject(new Error('看板加载失败')); };
+      script.onerror = () => {
+        magpieLoading = null;
+        $('magpieView').classList.add('ready');
+        reject(new Error('看板加载失败'));
+      };
       document.head.appendChild(script);
     });
   }
   return magpieLoading;
+}
+
+// Loads the dashboard in the background right after the relay confirms Magpie, including its first data fetch.
+function prefetchMagpieBoard() {
+  loadMagpieBoard()
+    .then(board => board.prefetch())
+    .catch(() => {});
 }
 
 function setMode(m) {
@@ -1099,6 +1119,7 @@ function setMode(m) {
   if (leavingBoard) window.magpieBoard?.hide();
   if (authed) send({ t: 'mode', mode: relayMode() });
   if (m === 'board') {
+    if (!$('magpieView').classList.contains('ready')) status('正在加载看板...');
     loadMagpieBoard().then(board => { if (mode === 'board') board.show(); }).catch(error => status(error.message, false));
     return;
   }
