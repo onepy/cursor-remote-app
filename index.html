@@ -1058,8 +1058,8 @@ $('sheet').addEventListener('click', async e => {
 });
 
 /* ---------- mode switching ---------- */
-// The relay only knows chat / screen; while the dashboard is open it keeps streaming the chat in the background.
-const relayMode = () => (mode === 'screen' ? 'screen' : 'chat');
+// The relay slows its chat polling while the dashboard is open, and resumes it on the way back.
+const relayMode = () => (mode === 'screen' ? 'screen' : mode === 'board' ? 'board' : 'chat');
 
 // The dashboard's script and styles load the first time the tab is opened.
 let magpieLoading = null;
@@ -1097,11 +1097,11 @@ function setMode(m) {
   // The composer has nothing to send from the dashboard.
   document.querySelector('footer .row').hidden = m === 'board';
   if (leavingBoard) window.magpieBoard?.hide();
+  if (authed) send({ t: 'mode', mode: relayMode() });
   if (m === 'board') {
     loadMagpieBoard().then(board => { if (mode === 'board') board.show(); }).catch(error => status(error.message, false));
     return;
   }
-  if (authed) send({ t: 'mode', mode: relayMode() });
   if (m === 'screen') { layoutStage(); applyQuality(); }
 }
 $('tabChat').onclick = () => setMode('chat');
