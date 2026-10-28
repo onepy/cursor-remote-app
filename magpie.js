@@ -42,6 +42,7 @@
     },
     timerId: null,
     isRefreshing: false,
+    lastFetchAt: 0,
     initialized: false,
     selectedDecisionIndex: 0,
     showFullCatalog: false,
@@ -309,6 +310,7 @@
         if (isManual) notify("网关连接失败: " + err.message);
       } finally {
         AppState.isRefreshing = false;
+        AppState.lastFetchAt = Date.now();
         if (btnRefresh) btnRefresh.classList.remove("spinning");
       }
     },
@@ -1092,8 +1094,14 @@
       notify = options.notify || notify;
       if (!AppState.initialized) app.init();
     },
+    // Called as soon as the relay reports Magpie, so the first tap on "看板" already has data on screen.
+    prefetch() {
+      if (AppState.lastFetchAt) return Promise.resolve();
+      return app.refreshAll(false).catch(() => {});
+    },
     show() {
-      app.refreshAll(false);
+      // Only re-fetch when the prefetched data is getting old; otherwise it is already on screen.
+      if (!AppState.lastFetchAt || Date.now() - AppState.lastFetchAt > 15000) app.refreshAll(false);
       app.setupAutoRefresh();
     },
     hide() {
