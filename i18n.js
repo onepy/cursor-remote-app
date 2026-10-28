@@ -6,6 +6,17 @@ const I18N = (() => {
 
   const EN = {
     '连接中…': 'Connecting…', '对话': 'Chat', '画面': 'Screen', '↑ 加载更早的消息': '↑ Load earlier messages',
+    // Magpie dashboard tab
+    '看板': 'Board', '额度': 'Quotas', '用量': 'Usage', '路由': 'Routing', '明细': 'Requests', '连接中...': 'Connecting...',
+    '本机网关': 'Local gateway', '连接失败': 'Connection failed', '刷新数据': 'Refresh', '看板设置': 'Board settings',
+    '总账号数': 'Accounts', '活跃订阅': 'Active plans', '钱包总额': 'Wallet total', '今日': 'Today', '近 7 天': 'Last 7 days', '近 30 天': 'Last 30 days',
+    '近期请求记录': 'Recent requests', '仅看错误': 'Errors only', '自动刷新频率': 'Auto refresh', '关闭自动刷新': 'Off',
+    '每 15 秒': 'Every 15 s', '每 30 秒': 'Every 30 s', '每 1 分钟': 'Every minute', '每 5 分钟': 'Every 5 minutes', '保存': 'Save',
+    '隐私保护：对账号邮箱进行脱敏（打码）': 'Privacy: mask account e-mail addresses',
+    '数据由电脑上的中继转发自本机 Magpie（127.0.0.1:3425），网关地址和密钥只保存在电脑上。': 'Data comes from Magpie on the computer (127.0.0.1:3425) through the relay; the gateway address and key stay on the computer.',
+    '连不上 Magpie 网关': 'Cannot reach the Magpie gateway', '看板加载失败': 'Could not load the board',
+    '切换超时，可以再试一次，或在「画面」里确认': 'Switch timed out; try again or check in "Screen"',
+    '切换没有生效，可以再试一次，或在「画面」里确认': 'The switch did not take effect; try again or check in "Screen"',
     '没找到聊天面板。': 'No chat panel found.', '请在 Cursor 里打开 Agent 对话，或切到「画面」查看。': 'Open an Agent chat in Cursor, or switch to "Screen".',
     '↓ 最新': '↓ Latest', '聊天面板': 'Chat panel', '整个窗口': 'Whole window', '点击': 'Tap', '滚动': 'Scroll', '刷新': 'Refresh',
     '回车': 'Enter', '⌘回车': '⌘Enter', '打开聊天': 'Open chat', '右键': 'Right-click', '历史': 'History', '＋ 新建': '+ New',
@@ -152,7 +163,8 @@ const I18N = (() => {
   const tr = s => lang === 'zh' || s == null ? s : String(s).split('\n').map(line).join('\n');
 
   // Content mirrored from Cursor or the computer's files is never translated.
-  const SKIP = '#items, #vBody, #vName, #vPath, #titleText, .qt, [data-label] .lbl, [data-win] .lbl, .qnQ, .qnOpt span';
+  const SKIP = '#items, #vBody, #vName, #vPath, #titleText, .qt, [data-label] .lbl, [data-win] .lbl, .qnQ, .qnOpt span, '
+    + '#quotasList, #modelsUsageList, #agentsUsageList, #requestsList, #routingModelsList, #decisionBulletsList';
   const ATTRS = ['placeholder', 'title', 'aria-label'];
   const fix = node => {
     if (node.nodeType === 3) {
